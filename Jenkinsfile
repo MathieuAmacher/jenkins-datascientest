@@ -19,7 +19,7 @@ pipeline {
     stage('Deploying'){
       step{
         script {
-          docker build -t $DOCKER_ID/$DOCKER_IMAGE:version_api
+          docker build -t $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG .
         }
       }
     }
