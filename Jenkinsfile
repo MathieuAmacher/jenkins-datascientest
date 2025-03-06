@@ -27,5 +27,35 @@ pipeline {
           }
         }
       }
+      stage('confirm'){
+        step{
+          input{
+            message "Voulez vous déployer le code sur la branche main"
+          }
+        }
+      }
+      stage('pushing and merging'){
+        parallel{
+          stage('pushing'){
+            environment{
+              DOCKERHUB_CREDENTIALS = credentials('docker_jenkins')
+            }
+            steps{
+              sh 'echo $DOCKERHUB_CREDENTIALS_PSW |docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+              sh 'docker push $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG'
+            }
+          }
+          stage('merging'){
+            step{
+              echo 'merging done'
+            }
+          }
+        }
+      }
+  }
+  post{
+    always{
+      sh 'docker logout'
+    }
   }
 }
